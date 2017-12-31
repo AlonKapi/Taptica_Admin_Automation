@@ -1,23 +1,40 @@
 package admin_test;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Observable;
-
 import org.openqa.selenium.chrome.ChromeDriver;
+import admin_bulk.*;
 
 public class Model extends Observable{
 	private ExcelData excel;
 	private Admin admin;
 	private ArrayList<Offer> offersList;
-	private String[] credentials;
+	public ArrayList<BulkUpdateoffers> bulkList;
+	ArrayList<advDATAinfo> dataperAdv;
+	Map<String, ArrayList<BulkUpdateoffers>> offersPerAdvId;
 	
 	public Model() {
-		credentials = new String[2];
 	}
 	
 	public ArrayList<Offer> getOffers() {
 		return this.offersList;
+	}
+	
+	public void setOffers(ArrayList<Offer> offers) {
+		this.offersList = offers;
+	}
+	
+	public Map<String, ArrayList<BulkUpdateoffers>> getOffersPerAdvId() {
+		return offersPerAdvId;
+	}
+
+	public void setOffersPerAdvId(Map<String, ArrayList<BulkUpdateoffers>> offersPerAdvId) {
+		this.offersPerAdvId = offersPerAdvId;
 	}
 	
 	public void setupExcel(String filepath) {
@@ -33,18 +50,59 @@ public class Model extends Observable{
 	}
 	
 	public void runAdmin() {
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		
+		try {
+		String UserName = null;
+		String passAdmin = null;
+		File o = new File(".\\AdminLogin.txt");
+		Crendentials ob = null;
+		
+		if (!o.exists()) throw new IOException();
+		fis = new FileInputStream(o);
+		ois = new ObjectInputStream(fis);
+		ob = (Crendentials)ois.readObject();
+		UserName = ob.getUserName();
+		passAdmin = ob.getLogin();
+		
 		admin = new Admin(new ChromeDriver());
-		admin.setCredentials(credentials);
 		
 		for (int i=0 ; i<offersList.size(); i++) {	// running each offer creation
-			admin.adminRun(offersList.get(i));
+			String offerid = admin.adminRun(offersList.get(i),UserName,passAdmin);
+			offersList.get(i).setOfferID(offerid);
 		}
 		
 		setChanged();
-		notifyObservers(new String("FINISHED"));
+		notifyObservers(new String("FINISHED_ADMIN"));
+		}catch(IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void setCredentials(String[] cred) {
-		this.credentials = cred;
+	public void setupBulk(String filepath) {
+		ExcelBulkOffers excel = new ExcelBulkOffers(filepath);
+		InfoDataExcel exceldata = new InfoDataExcel(".\\e.xlsx");
+		
+		try {
+			dataperAdv = exceldata.getDataInfoFromExcel();
+			offersPerAdvId = excel.getOffersPerAdvId();
+			bulkList = excel.getBulkOfferFromExcel();
+			setChanged();
+			notifyObservers(new String("BULK_OK"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+	}
+	
+	public void runBulk() {
+		advBULK advb = new advBULK(new ChromeDriver());
+		try {
+			advb.bulkRun(offersPerAdvId,dataperAdv);
+			setChanged();
+			notifyObservers(new String("FINISHED_BULK"));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

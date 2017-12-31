@@ -18,7 +18,18 @@ public class Offer {
 	protected ArrayList<String> offerPlatforms;
 	protected String offerRequirements;
 	protected String offerKPI;
+	protected String AppURL = null;
+	protected String Comments;
+	protected String offerID;
 	
+	public String getOfferID() {
+		return offerID;
+	}
+
+	public void setOfferID(String offerID) {
+		this.offerID = offerID;
+	}
+
 	public Offer() {
 		offerCountries = new ArrayList<String>();
 		offerPlatforms = new ArrayList<String>();
@@ -27,7 +38,7 @@ public class Offer {
 	public Offer(String offerName, String offerClass, String offerEndDate, String offerTrackingLink,
 			String offerRevenue, String offerPayout, String offerBudgetType, String offerBudgetLimit,
 			String offerBudgetStartDate, String offerDailyCap, ArrayList<String> offerCountries,
-			ArrayList<String> offerPlatforms, String offerRequirements, String offerKPI) {
+			ArrayList<String> offerPlatforms, String offerRequirements, String offerKPI, String Comments) {
 		this.offerName = offerName;
 		this.offerClass = offerClass;
 		this.offerEndDate = offerEndDate;
@@ -42,13 +53,33 @@ public class Offer {
 		this.offerPlatforms = offerPlatforms;
 		this.offerRequirements = offerRequirements;
 		this.offerKPI = offerKPI;
+		this.Comments = Comments;
 	}
 	
-	public String[] getOfferAsRow() {
-		String[] row = {offerName, offerClass, offerEndDate, offerBudgetType, offerBudgetLimit, offerBudgetStartDate, offerDailyCap,
-				offerRevenue, offerPayout, offerCountries.toString(), offerPlatforms.toString(), offerRequirements, offerKPI};
-		
-		return row;
+	public String getComments() {
+		return Comments;
+	}
+
+	public void setComments(String comments) {
+		Comments = comments;
+	}
+
+	public String getAppURL() {
+		return AppURL;
+	}
+
+	public void setAppURL(String appURL) {
+		AppURL = appURL;
+	}
+
+	public Object[] toData() {
+		return new Object[] {offerName, offerClass, offerEndDate, offerTrackingLink, offerRevenue, offerPayout, offerBudgetType, offerBudgetLimit, offerBudgetStartDate,
+				offerDailyCap, offerCountries.toString(), offerPlatforms.toString(), offerRequirements, offerKPI};
+	}
+	
+	public static Object[] toColums() {
+		return new Object[] {"OfferName","Class","EndDate","TrackingLink","Revenue","PayOut","BugetType","BugetLimit","BugetStartDate",
+							"DailyCap","Contries","Platform","Requirement","KPI"};
 	}
 
 	public String getOfferName() {
