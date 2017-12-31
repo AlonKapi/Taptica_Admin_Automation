@@ -1,8 +1,7 @@
 package admin_test;
 
 import admin.controller.Controller;
-import admin.view.CredentialsGui;
-import admin.view.GUI;
+import admin.view.MainWindow;
 
 public class Main{
 	public static void main(String[] args) {
@@ -11,20 +10,18 @@ public class Main{
 		
 		// creating the model
 		Model model = new Model();
-		
+
 		// creating the view
-		CredentialsGui cred = new CredentialsGui();
-		GUI gui = new GUI();
+		MainWindow gui = new MainWindow();
 		
 		// creating the controller
-		Controller controller = new Controller(model, cred, gui);
+		Controller controller = new Controller(model, gui);
 		
 		// adding observers
 		model.addObserver(controller);
-		cred.addObserver(controller);
 		gui.addObserver(controller);
 		
 		// starting point from the login gui
-		new Thread(cred).start();
+		new Thread(gui).start();
 	}
 }

@@ -40,7 +40,7 @@ public class ExcelData {
 		Row headerRow = sheet.getRow(0);	// used to determine the current place in the workbook
 		
 		
-		for (int i=1; i<sheet.getLastRowNum(); i++) {	// iterates through all the rows minus the header, each row is an offer
+		for (int i=1; i<sheet.getLastRowNum()+1; i++) {	// iterates through all the rows minus the header, each row is an offer
 			Offer offer = new Offer();
 			Row dataRow = sheet.getRow(i);
 			
@@ -148,6 +148,9 @@ public class ExcelData {
 				case "BUDGET_START_DATE__C":
 					offer.setOfferBudgetStartDate(temp);
 					break;
+				case "COMMENTS__C":
+					offer.setComments(temp);
+					break;	
 				}
 			}
 			
