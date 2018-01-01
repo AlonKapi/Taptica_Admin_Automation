@@ -21,7 +21,7 @@ public class Main{
 		model.addObserver(controller);
 		gui.addObserver(controller);
 		
-		// starting point from the login gui
+		// starting the gui
 		new Thread(gui).start();
 	}
 }
